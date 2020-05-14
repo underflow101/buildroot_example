@@ -1,0 +1,49 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          sample_service
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Sample service init.d script
+# Description:       Sample service init.d script
+### END INIT INFO
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin:/usr/local/bin
+
+WORK_DIR="~/"
+FILE_NAME="hellobuild.py"
+
+start(){
+    cd $WORK_DIR
+    python3 $FILE_NAME &
+    echo "Python program is started."
+}
+
+stop(){
+    pid=$(ps aux | grep $FILE_NAME | awk '{print $2}')
+    if [ -n "$pid" ]
+    then
+        kill -9 $pid
+    fi
+    sleep 1
+    echo "Python program is stopped."
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        stop
+        start
+        ;;
+    *)
+        echo "Usage: /etc/init.d/sample_service.py {start|stop|restart}"
+        exit 1
+        ;;
+esac
+exit 0
